@@ -8,13 +8,18 @@ in {
   home.packages = with pkgs; 
     [
       git
-      neovim
+      fd
+      ripgrep
+      thefuck
     ];
   home.stateVersion = "24.05";
 
   programs.kitty = {
     enable = true;
-    theme = "Material Dark";
+    font = {
+      name = "Fira Code";
+      size = 14;
+    };
   };
 
   programs.firefox = {
@@ -24,9 +29,9 @@ in {
       DisableFirefoxStudies = true;
       EnableTrackingProtection = {
         Value = true;
-	Locked = true;
-	Cryptomining = true;
-	Fingerprinting = true;
+	      Locked = true;
+	      Cryptomining = true;
+	      Fingerprinting = true;
       };
       DisablePocket = true;
       DisableFirefoxAccounts = true;
@@ -54,11 +59,11 @@ in {
           install_url = "https://addons.mozilla.org/firefox/downloads/latest/privacy-badger17/latest.xpi";
           installation_mode = "force_installed";
         };
-	# Bitwarden:
-	"{446900e4-71c2-419f-a6a7-df9c091e268b}" = {
-	  install_url = "https://addons.mozilla.org/firefox/downloads/latest/bitwarden-password-manager/latest.xpi";
-	  installation_mode = "force_installed";
-	};
+        # Bitwarden:
+        "{446900e4-71c2-419f-a6a7-df9c091e268b}" = {
+          install_url = "https://addons.mozilla.org/firefox/downloads/latest/bitwarden-password-manager/latest.xpi";
+          installation_mode = "force_installed";
+        };
       };
       
       Preferences = { 
@@ -179,5 +184,18 @@ in {
   };
 
   programs.gh.enable = true;
+
+  programs.zsh = {
+    enable = true;
+    enableCompletion = true;
+    autosuggestion.enable = true;
+    syntaxHighlighting.enable = true;
+    dotDir = ".config/zsh";
+    oh-my-zsh = {
+      enable = true;
+      plugins = [ "git" "thefuck" ];
+      theme = "crunch";
+    };
+  };
 
 }

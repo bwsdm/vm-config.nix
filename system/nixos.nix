@@ -52,5 +52,7 @@ in
 
       # add more nix modules here
 
+      inputs.nixvim.nixosModules.nixvim
+
     ];
   }

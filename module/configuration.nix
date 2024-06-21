@@ -5,6 +5,16 @@
   boot.loader.efi.canTouchEfiVariables = true;
   boot.loader.systemd-boot.enable = true;
 
+  environment.systemPackages = [
+    pkgs.nerdfonts
+    pkgs.lazygit
+  ];
+
+  fonts.packages = with pkgs; [
+    fira-code
+    fira-code-symbols
+  ];
+
   i18n.defaultLocale = "en_US.UTF-8";
 
   i18n.extraLocaleSettings = {
@@ -49,7 +59,64 @@
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   programs.zsh.enable = true;
+  programs.nixvim = {
+    enable = true;
+    colorschemes.oxocarbon.enable = true;
+    opts = {
+      number = true;
+      relativenumber = true;
 
+      # indentation
+      tabstop = 2;
+      softtabstop = 2;
+      shiftwidth = 2;
+      expandtab = true;
+      smartindent = true;
+
+      # swap, backup, undo
+      swapfile = false;
+      backup = false;
+      undofile = false;
+
+      # search
+      incsearch = true;
+      hlsearch = true;
+
+      # code folding
+      foldcolumn = "0";
+      foldlevel = 99;
+      foldlevelstart = 99;
+      foldenable = true;
+
+      # misc
+      wrap = false;
+      termguicolors = true;
+      scrolloff = 8;
+      colorcolumn = "80";
+      cursorline = true;
+      completeopt = "menu,menuone,noselect";
+      background = "dark";
+    };
+
+    plugins.dashboard = {
+      enable = true;
+      settings = {
+        config = {
+          header = [
+        
+
+            "██████╗ ██╗    ██╗███████╗██████╗ ███╗   ███╗"
+            "██╔══██╗██║    ██║██╔════╝██╔══██╗████╗ ████║"
+            "██████╔╝██║ █╗ ██║███████╗██║  ██║██╔████╔██║"
+            "██╔══██╗██║███╗██║╚════██║██║  ██║██║╚██╔╝██║"
+            "██████╔╝╚███╔███╔╝███████║██████╔╝██║ ╚═╝ ██║"
+            "╚═════╝  ╚══╝╚══╝ ╚══════╝╚═════╝ ╚═╝     ╚═╝"
+                                                   
+          ];
+        };
+      };
+    };
+  };
 
   security.sudo.enable = true;
   security.sudo.wheelNeedsPassword = false;
@@ -69,7 +136,7 @@
       extraPackages = with pkgs; [
         i3blocks
         i3lock
-	i3status
+        i3status
       ];
     };
   };
@@ -107,7 +174,10 @@
   systemd.services."getty@tty1".enable = false;
   systemd.services."autovt@tty1".enable = false;
 
-  users.mutableUsers = false;
+  users = {
+    mutableUsers = false;
+    defaultUserShell = pkgs.zsh;
+  };
 
   virtualisation.vmware.guest.enable = true;
 
