@@ -194,7 +194,7 @@ in {
     oh-my-zsh = {
       enable = true;
       plugins = [ "git" "thefuck" ];
-      theme = "crunch";
+      theme = "fwalch";
     };
   };
 

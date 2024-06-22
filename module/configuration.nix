@@ -101,21 +101,86 @@
     plugins.dashboard = {
       enable = true;
       settings = {
+        theme = "doom";
         config = {
           header = [
         
-
+            ""
             "██████╗ ██╗    ██╗███████╗██████╗ ███╗   ███╗"
             "██╔══██╗██║    ██║██╔════╝██╔══██╗████╗ ████║"
             "██████╔╝██║ █╗ ██║███████╗██║  ██║██╔████╔██║"
             "██╔══██╗██║███╗██║╚════██║██║  ██║██║╚██╔╝██║"
             "██████╔╝╚███╔███╔╝███████║██████╔╝██║ ╚═╝ ██║"
             "╚═════╝  ╚══╝╚══╝ ╚══════╝╚═════╝ ╚═╝     ╚═╝"
-                                                   
+            ""                                     
+          ];
+          center = [
+            {
+              action = "Telescope find_files";
+              desc = " Find File";
+              desc_hl = "String";
+              icon = " ";
+              icon_hl = "Title";
+              key = "f";
+              key_format = " %s";
+              key_hl = "Number";
+            }
+            {
+              action = "qa";
+              desc = " Quit";
+              desc_hl = "String";
+              icon = " ";
+              icon_hl = "Title";
+              key = "q";
+              key_format = " %s";
+              key_hl = "Number";
+            }
           ];
         };
       };
     };
+
+    plugins.telescope = {
+      enable = true;
+      extensions = {
+        fzf-native.enable = true;
+        undo.enable = true;
+      };
+      settings = {
+        pickers = {
+          colorscheme.enable_preview = true;
+        };
+        defaults.mappings = {
+          n = {
+            q = {
+              __raw = "require('telescope.actions').close";
+            };
+          };
+        };
+      };
+    };
+
+    plugins.indent-blankline = {
+      enable = true;
+      settings = {
+        exclude = {
+          filetypes = [
+            "help"
+            "alpha"
+            "dashboard"
+            "neo-tree"
+            "Trouble"
+            "trouble"
+            "lazy"
+            "mason"
+            "notify"
+            "toggleterm"
+            "lazyterm"
+          ];
+        };
+      };
+    };
+
   };
 
   security.sudo.enable = true;
