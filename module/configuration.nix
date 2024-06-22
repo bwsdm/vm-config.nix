@@ -1,6 +1,17 @@
 { config, pkgs, ... }:
+let
+  inherit (pkgs)
+    gofumpt
+    stylua
+    ruff
+    prettierd
+    nixpkgs-fmt
+    terraform;
 
+in
 {
+
+  nixpkgs.config.allowUnfree = true;
 
   boot.loader.efi.canTouchEfiVariables = true;
   boot.loader.systemd-boot.enable = true;
@@ -61,7 +72,9 @@
   programs.zsh.enable = true;
   programs.nixvim = {
     enable = true;
+    clipboard.register = "unnamedplus";
     colorschemes.oxocarbon.enable = true;
+    globals.mapleader = " ";
     opts = {
       number = true;
       relativenumber = true;
@@ -96,6 +109,45 @@
       cursorline = true;
       completeopt = "menu,menuone,noselect";
       background = "dark";
+    };
+
+    keymaps = [
+      {
+        action = "<cmd>Telescope find_files<cr>";
+        key = "<leader>ff";
+        options = {
+          silent = true;
+        };
+      }
+    ];
+
+    extraPackages = [
+      gofumpt
+      stylua
+      ruff
+      prettierd
+      nixpkgs-fmt
+      terraform
+    ];
+
+    extraConfigLua = ''
+      vim.api.nvim_create_user_command("Format", function(args)
+        require("conform").format({ async = true, lsp_fallback = true})
+      end, {})
+    '';
+
+    plugins.conform-nvim = {
+      enable = true;
+      formattersByFt = {
+        go = [ "gofumpt" ];
+        lua = [ "stylua" ];
+        python = [ "ruff_format" "ruff_fix" "isort" "black" ];
+        javascript = [ "prettierd" ];
+        typescript = [ "prettierd" ];
+        nix = [ "nixpkgs_fmt" ];
+        tf = [ "terraform_fmt" ];
+        "_" = [ "trim_whitespace" ];
+      };
     };
 
     plugins.dashboard = {
@@ -140,6 +192,14 @@
       };
     };
 
+    plugins.dap = {
+      enable = true;
+      extensions = {
+        dap-ui.enable = true;
+        dap-virtual-text.enable = true;
+      };
+    };
+
     plugins.telescope = {
       enable = true;
       extensions = {
@@ -180,6 +240,164 @@
         };
       };
     };
+
+    plugins.neo-tree = {
+      enable = true;
+      enableGitStatus = true;
+      enableRefreshOnWrite = true;
+
+      defaultComponentConfigs = {
+        indent = {
+          withExpanders = true;
+          expanderCollapsed = "";
+          expanderExpanded = "";
+          expanderHighlight = "NeoTreeExpander";
+        };
+      };
+
+      window = {
+        position = "float";
+      };
+
+      filesystem = {
+        filteredItems = {
+          hideDotfiles = false;
+          alwaysShow = [ ".gitignore" "flake.nix" ];
+          hideByPattern = [ "*/.git" ];
+        };
+      };
+    };
+
+    plugins.lualine = {
+      enable = true;
+      globalstatus = true;
+    };
+    
+    plugins = {
+      lsp = {
+        enable = true;
+        keymaps = {
+          silent = true;
+
+          diagnostic = {
+            "<leader>do" = "open_float";
+            "[d" = "goto_prev";
+            "]d" = "goto_next";
+          };
+
+          lspBuf = {
+            "gd" = "definition";
+            "gt" = "type_definition";
+            "K" = "hover";
+            "<leader>ca" = "code_action";
+            "<leader>rn" = "rename";
+          };
+        };
+
+        servers = {
+          astro.enable = true;
+          bashls.enable = true;
+          cssls.enable = true;
+          dockerls.enable = true;
+          html.enable = true;
+          jsonls.enable = true;
+          lua-ls.enable = true;
+          nixd.enable = true;
+          pyright.enable = true;
+          terraformls.enable = true;
+          tsserver.enable = true;
+          yamlls.enable = true;
+          zls.enable = true;
+        };
+      };
+
+      fidget.enable = true;
+    };
+
+    plugins = {
+      cmp = {
+        enable = true;
+        autoEnableSources = true;
+
+        settings = {
+          snippet.expand = "function(args) require('luasnip').lsp_expand(args.body) end";
+
+          sources = [
+            { name = "nvim_lsp"; }
+            { name = "nvim_lsp_document_symbol"; }
+            { name = "nvim_lsp_signature_help"; }
+            { name = "luasnip"; }
+            { name = "path"; }
+          ];
+
+          window = {
+            documentation.maxHeight = "math.floor(40 * (40 / vim.o.lines))";
+            completion = {
+              colOffset = -3;
+              sidePadding = 0;
+            };
+          };
+
+          mapping = {
+            "<C-p>" = "cmp.mapping.select_prev_item()";
+            "<C-n>" = "cmp.mapping.select_next_item()";
+
+            "<C-d>" = "cmp.mapping.scroll_docs(-4)";
+            "<C-f>" = "cmp.mapping.scroll_docs(4)";
+
+            "<C-Space>" = "cmp.mapping.complete({})";
+            "<C-e>" = "cmp.mapping.close()";
+
+            "<C-y>" = "cmp.mapping.confirm()";
+
+          };
+
+          formatting = {
+            fields = [ "kind" "abbr" "menu" ];
+            format = ''
+              function(_, vim_item)
+                local icons = {
+                  Text = "  ",
+                  Method = "  ",
+                  Function = "  ",
+                  Constructor = "  ",
+                  Field = "  ",
+                  Variable = "  ",
+                  Class = "  ",
+                  Interface = "  ",
+                  Module = "  ",
+                  Property = "  ",
+                  Unit = "  ",
+                  Value = "  ",
+                  Enum = "  ",
+                  Keyword = "  ",
+                  Snippet = "  ",
+                  Color = "  ",
+                  File = "  ",
+                  Reference = "  ",
+                  Folder = "  ",
+                  EnumMember = "  ",
+                  Constant = "  ",
+                  Struct = "  ",
+                  Event = "  ",
+                  Operator = "  ",
+                  TypeParameter = "  ",
+                }
+
+                vim_item.menu = vim_item.kind
+                vim_item.kind = icons[vim_item.kind]
+                return vim_item
+              end
+            '';
+          };
+        };
+      };
+    };
+
+    plugins.luasnip = {
+      enable = true;
+    };
+
 
   };
 
