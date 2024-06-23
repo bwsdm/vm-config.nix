@@ -19,6 +19,10 @@ in
   environment.systemPackages = [
     pkgs.nerdfonts
     pkgs.lazygit
+    pkgs.git
+    pkgs.discord
+    pkgs.gimp
+    pkgs.flameshot
   ];
 
   fonts.packages = with pkgs; [
@@ -435,7 +439,9 @@ in
 
   ## Sound settings ##
   sound.enable = true;
-  hardware.pulseaudio.enable = false;
+  hardware = {
+    pulseaudio.enable = false;
+  };
   security.rtkit.enable = true;
   services.pipewire = {
     enable = true;
